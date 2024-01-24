@@ -107,14 +107,14 @@ def n_abramkin_telegram_report():
             new_users.count_organic_users AS organic_users,
             new_users.count_ads_users AS ads_users,
             new_posts.count_new_posts AS new_posts
-            FROM simulator_20230920.feed_actions AS fa
+            FROM feed_actions AS fa
             JOIN 
             -- количество новых пользователей, органических, по рекламе
             (SELECT date, COUNT(DISTINCT user_id) AS count_new_users,
             COUNTIf(DISTINCT user_id, source = 'organic') AS count_organic_users,
             COUNTIf(DISTINCT user_id, source = 'ads') AS count_ads_users
             FROM (SELECT user_id, MIN(toDate(time)) AS date, source
-                  FROM simulator_20230920.feed_actions
+                  FROM feed_actions
                   GROUP BY user_id, source) 
             WHERE date BETWEEN (today() - 7) AND (today() - 1)
             GROUP BY date) AS new_users
@@ -123,7 +123,7 @@ def n_abramkin_telegram_report():
             -- количество новых постов
             (SELECT date, COUNT(DISTINCT post_id) AS count_new_posts
             FROM (SELECT post_id, MIN(toDate(time)) AS date 
-                  FROM simulator_20230920.feed_actions
+                  FROM feed_actions
                   GROUP BY post_id)
             WHERE date BETWEEN (today() - 7) AND (today() - 1)
             GROUP BY date) AS new_posts
@@ -190,7 +190,7 @@ def n_abramkin_telegram_report():
                 new_users.count_new_users AS new_users,
                 new_users.count_organic_users AS organic_users,
                 new_users.count_ads_users AS ads_users
-                FROM simulator_20230920.message_actions AS ma
+                FROM message_actions AS ma
 
                 JOIN 
                 -- количество новых пользователей, органических, по рекламе
@@ -198,7 +198,7 @@ def n_abramkin_telegram_report():
                  COUNTIf(DISTINCT user_id, source = 'organic') AS count_organic_users,
                  COUNTIf(DISTINCT user_id, source = 'ads') AS count_ads_users
                 FROM (SELECT user_id, MIN(toDate(time)) AS date, source
-                      FROM simulator_20230920.message_actions
+                      FROM message_actions
                       GROUP BY user_id, source) 
                 WHERE date BETWEEN (today() - 7) AND (today() - 1)
                 GROUP BY date) AS new_users
